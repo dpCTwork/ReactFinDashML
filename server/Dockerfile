@@ -20,6 +20,39 @@ FROM base as build
 RUN apt-get update -qq && \
     apt-get install -y build-essential pkg-config python-is-python3
 
+COPY <<-"EOF" /app/package.json
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "helmet": "^6.0.1",
+    "mongoose": "^7.0.0",
+    "mongoose-currency": "^0.2.0",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "@flydotio/dockerfile": "^0.4.10",
+    "nodemon": "^3.0.1"
+  }
+}
+EOF
+
+RUN npm install --legacy-peer-deps
+
 # Install node modules
 COPY --link package-lock.json package.json ./
 RUN npm ci
